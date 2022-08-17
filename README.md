@@ -30,11 +30,16 @@ roslaunch realsense2_camera rs_camera.launch align_depth:=true color_fps:=10 dep
 ```
 
 
-## Save data to ROS bag files
+## Save images to ROS bag files and png files
 The following instruction is based on 
 [rosbag cli page](http://wiki.ros.org/rosbag/Commandline).
 
-### Recipes
+### Recipes for ROS image topics to ROS bag files
 ```
 rosbag record --duration=10 -o record_t1.bag /camera/color/image_raw /camera/aligned_depth_to_color/image_rect_raw
+```
+
+### Recipes for ROS bag files to png files
+```
+python bag_to_images.py record_t1
 ```
