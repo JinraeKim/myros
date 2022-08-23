@@ -26,7 +26,7 @@ Other options: `color_fps`, `depth_fps`, etc.
 
 ### Stream RGB and aligned depth data
 ```
-roslaunch realsense2_camera rs_camera.launch align_depth:=true color_fps:=10 depth_fps:=10
+roslaunch realsense2_camera rs_camera.launch align_depth:=true color_fps:=5 depth_fps:=5
 ```
 
 
@@ -36,10 +36,19 @@ The following instruction is based on
 
 ### Recipes for ROS image topics to ROS bag files
 ```
-rosbag record --duration=10 -o record_t1.bag /camera/color/image_raw /camera/aligned_depth_to_color/image_rect_raw
+rosbag record --duration=10 -o record_t1.bag /camera/color/image_raw /camera/aligned_depth_to_color/image_raw
 ```
 
 ### Recipes for ROS bag files to png files
 ```
 python bag_to_images.py record_t1
 ```
+
+
+## ROS app with opencv
+### RGB image processing
+You can find an example of drawing a circle on the streamed camera image in `./image_converter.py`.
+
+### Synchronise multiple topics
+You can Synchronise multiple ROS topics by using `message_filters.TimeSynchronizer`.
+For more details, see `image_depth_synchroniser.py`.
