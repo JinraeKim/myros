@@ -22,11 +22,11 @@ To resolve this issue, use the `align_depth:=true` option described as below.
 
 Other options: `color_fps`, `depth_fps`, etc.
 
-**NOTICE: high fps may stop the computer. It is recommended you to designate low fps as below.**
+<!-- **NOTICE: high fps may stop the computer. It is recommended you to designate low fps as below.** -->
 
 ### Stream RGB and aligned depth data
 ```
-roslaunch realsense2_camera rs_camera.launch align_depth:=true color_fps:=5 depth_fps:=5
+roslaunch realsense2_camera rs_camera.launch align_depth:=true
 ```
 
 
