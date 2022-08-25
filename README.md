@@ -58,6 +58,15 @@ ModuleNotFoundError: No module named 'Cryptodome'
 then install those as `python3 -m pip install pycryptodomex`.
 
 
+## Conversion from images to pointcloud
+Based on [depth_image_proc](http://wiki.ros.org/depth_image_proc#depth_image_proc.2Fpoint_cloud_xyz).
+
+### Recipe
+```
+roslaunch point_cloud_xyzrgb.launch
+```
+
+
 ## ROS app with opencv
 ### RGB image processing
 You can find an example of drawing a circle on the streamed camera image in `./image_converter.py`.
