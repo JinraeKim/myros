@@ -27,6 +27,10 @@ class ImageDepthSynchroniser:
             cv_image = self.bridge.imgmsg_to_cv2(image_data, "bgr8")
         except CvBridgeError as e:
             print(e)
+        # try:
+        #     cv_depth = self.bridge.imgmsg_to_cv2(depth_data, "16UC1")
+        # except CvBridgeError as e:
+        #     print(e)
 
         (rows, cols, channels) = cv_image.shape
         if cols > 60 and rows > 60:

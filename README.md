@@ -58,13 +58,24 @@ ModuleNotFoundError: No module named 'Cryptodome'
 then install those as `python3 -m pip install pycryptodomex`.
 
 
-## Conversion from images to pointcloud
+## Recipes for pointcloud
+### Conversion from images to pointcloud
 Based on [depth_image_proc](http://wiki.ros.org/depth_image_proc#depth_image_proc.2Fpoint_cloud_xyz).
 
-### Recipe
 ```
 roslaunch point_cloud_xyzrgb.launch
 ```
+
+### Read pointcloud corresponding to pixel indices
+Based on [an ROS answer](https://answers.ros.org/question/325917/pointcloud-value-at-a-given-index/?answer=325921#post-id-325921).
+
+First, you may need to launch realsense camera as below.
+
+```
+roslaunch realsense2_camera rs_camera.launch align_depth:=true image_fps:=5 depth_fps:=5 filters:=pointcloud
+```
+
+And run `./pointcloud_manipulator.py`.
 
 
 ## ROS app with opencv
