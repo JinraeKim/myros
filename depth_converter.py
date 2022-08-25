@@ -8,30 +8,28 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
 
-class ImageConverter:
+class DepthConverter:
     def __init__(self):
-        self.image_pub = rospy.Publisher("/camera/color/image_converted", Image)
+        self.depth_pub = rospy.Publisher("/camera/aligned_depth_to_color/image_converted", Image)
 
         self.bridge = CvBridge()
-        self.image_sub = rospy.Subscriber("/camera/color/image_raw", Image, self.callback)
+        self.depth_sub = rospy.Subscriber("/camera/aligned_depth_to_color/image_raw", Image, self.callback)
 
-    def callback(self, image_data):
+    def callback(self, depth_data):
         try:
-            cv_image = self.bridge.imgmsg_to_cv2(image_data, "bgr8")
+            cv_depth = self.bridge.imgmsg_to_cv2(depth_data, "16UC1")
         except CvBridgeError as e:
             print(e)
 
-        (rows, cols, channels) = cv_image.shape
-        if cols > 60 and rows > 60:
-            cv2.circle(cv_image, (50, 50), 10, 255)
+        # (rows, cols) = cv_depth.shape
         try:
-            self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
+            self.depth_pub.publish(self.bridge.cv2_to_imgmsg(cv_depth, "16UC1"))
         except CvBridgeError as e:
             print(e)
 
 
 def main(args):
-    ic = ImageConverter()
+    dc = DepthConverter()
     rospy.init_node('image_converter', anonymous=True)
     try:
         rospy.spin()
