@@ -19,10 +19,13 @@ class DepthConverter:
 
     def callback(self, depth_data):
         """
-        depth == 0 means no data; see `depth_image_proc` [1, 2]
+        Notes:
+            - depth == 0 means no data; see `depth_image_proc` [1, 2].
+            - You need to assign the header of the published depth image [3].
         Refs:
             [1] https://github.com/ros-perception/image_pipeline/blob/noetic/depth_image_proc/include/depth_image_proc/depth_traits.h#L51
             [2] https://github.com/ros-perception/image_pipeline/blob/noetic/depth_image_proc/include/depth_image_proc/depth_conversions.h#L79
+            [3] https://answers.ros.org/question/405534/depth_image_proc-not-working-with-custom-depth/?answer=405539#post-id-405539
         """
         try:
             cv_depth = self.bridge.imgmsg_to_cv2(depth_data, "16UC1")
@@ -31,9 +34,6 @@ class DepthConverter:
 
         (rows, cols) = cv_depth.shape
         cv_depth[0:int(rows/2), 0:int(cols/2)] = 0
-        # import pdb; pdb.set_trace()
-        # cv_depth[:, :] = 1000
-        # cv_depth[0:int(rows/2), 0:int(cols/2)] = 1000
         try:
             depth_data_pub = self.bridge.cv2_to_imgmsg(cv_depth, "passthrough")
             depth_data_pub.header = depth_data.header
