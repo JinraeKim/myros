@@ -11,24 +11,29 @@ from cv_bridge import CvBridge, CvBridgeError
 class DepthConverter:
     def __init__(self):
         self.depth_pub = rospy.Publisher("/camera/aligned_depth_to_color/image_converted", Image)
+        # self.depth_pub = rospy.Publisher("/hi", Image)
+        # self.depth_pub = rospy.Publisher("/depth_registered/image_rect", Image)
 
         self.bridge = CvBridge()
         self.depth_sub = rospy.Subscriber("/camera/aligned_depth_to_color/image_raw", Image, self.callback)
 
     def callback(self, depth_data):
-        try:
-            cv_depth = self.bridge.imgmsg_to_cv2(depth_data, "16UC1")
-        except CvBridgeError as e:
-            print(e)
-
-        (rows, cols) = cv_depth.shape
         """
         depth == 0 means no data; see `depth_image_proc` [1, 2]
         Refs:
             [1] https://github.com/ros-perception/image_pipeline/blob/noetic/depth_image_proc/include/depth_image_proc/depth_traits.h#L51
             [2] https://github.com/ros-perception/image_pipeline/blob/noetic/depth_image_proc/include/depth_image_proc/depth_conversions.h#L78
         """
-        cv_depth[0:int(rows / 2), 0:int(cols / 2)] = 0
+        try:
+            cv_depth = self.bridge.imgmsg_to_cv2(depth_data, "16UC1")
+        except CvBridgeError as e:
+            print(e)
+
+        (rows, cols) = cv_depth.shape
+        cv_depth[0:int(rows/2), 0:int(cols/2)] = 0
+        # import pdb; pdb.set_trace()
+        # cv_depth[:, :] = 1000
+        # cv_depth[0:int(rows/2), 0:int(cols/2)] = 1000
         try:
             self.depth_pub.publish(self.bridge.cv2_to_imgmsg(cv_depth, "16UC1"))
         except CvBridgeError as e:
@@ -41,7 +46,7 @@ def main(args):
     try:
         rospy.spin()
     except KeyboardInterrupt:
-        print("Shutting down")
+        rospy.signal_shutdown("Shutting down")
     cv2.destroyAllWindows()
 
 
