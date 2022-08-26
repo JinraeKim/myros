@@ -1,0 +1,24 @@
+<launch>
+  <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager" />
+
+  <node pkg="nodelet" type="nodelet" name="nodelet_xyzrgb"
+        args="load depth_image_proc/point_cloud_xyzrgb nodelet_manager">
+    <remap from="rgb/camera_info" to="/camera/color/camera_info"/>
+    <remap from="rgb/image_rect_color" to="/camera/color/image_raw"/>
+
+
+    <remap from="depth_registered/image_rect" to="/camera/aligned_depth_to_color/image_converted"/>
+    <remap from="depth_registered/points" to="/camera/depth/color/points"/>
+
+    <!--
+    <remap from="depth_registered/image_rect" to="/hi"/>
+    <remap from="depth_registered/points" to="/hello"/>
+    -->
+
+    <!--
+    <remap from="depth_registered/image_rect" to="/camera/aligned_depth_to_color/image_converted"/>
+    <remap from="depth_registered/points" to="/camera/depth/color/points_converted"/>
+    -->
+
+  </node>
+</launch>
