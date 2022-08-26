@@ -22,7 +22,7 @@ class DepthConverter:
         depth == 0 means no data; see `depth_image_proc` [1, 2]
         Refs:
             [1] https://github.com/ros-perception/image_pipeline/blob/noetic/depth_image_proc/include/depth_image_proc/depth_traits.h#L51
-            [2] https://github.com/ros-perception/image_pipeline/blob/noetic/depth_image_proc/include/depth_image_proc/depth_conversions.h#L78
+            [2] https://github.com/ros-perception/image_pipeline/blob/noetic/depth_image_proc/include/depth_image_proc/depth_conversions.h#L79
         """
         try:
             cv_depth = self.bridge.imgmsg_to_cv2(depth_data, "16UC1")
@@ -35,7 +35,9 @@ class DepthConverter:
         # cv_depth[:, :] = 1000
         # cv_depth[0:int(rows/2), 0:int(cols/2)] = 1000
         try:
-            self.depth_pub.publish(self.bridge.cv2_to_imgmsg(cv_depth, "16UC1"))
+            depth_data_pub = self.bridge.cv2_to_imgmsg(cv_depth, "passthrough")
+            depth_data_pub.header = depth_data.header
+            self.depth_pub.publish(depth_data_pub)
         except CvBridgeError as e:
             print(e)
 
