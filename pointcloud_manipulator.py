@@ -3,9 +3,10 @@ from __future__ import print_function
 
 import sys
 import rospy
-from sensor_msgs.point_cloud2 import read_points_list, create_cloud_xyz32
+from sensor_msgs.point_cloud2 import create_cloud, read_points
 from sensor_msgs.msg import PointCloud2
-from std_msgs.msg import Header
+
+import numpy as np
 
 
 class PointCloudManipulator:
@@ -15,17 +16,17 @@ class PointCloudManipulator:
     Refs:
         [1] https://docs.ros.org/en/api/sensor_msgs/html/point__cloud2_8py_source.html
     """
-
     def __init__(self):
         self.pcd_pub = rospy.Publisher("/pointcloud", PointCloud2)
 
         self.pcd_sub = rospy.Subscriber("/camera/depth/color/points", PointCloud2, self.callback)
-        self.parent_frame = "/camera_color_optical_frame"
 
     def callback(self, pcd):
-        points = read_points_list(pcd, field_names=["x", "y", "z"])  # Note: this is pretty slow
-        header = Header(frame_id=self.parent_frame, stamp=rospy.Time.now())
-        pcd_new = create_cloud_xyz32(header, points)
+        _tmp = np.arange(0, 500)
+        uvs = [np.array([a, a]) for a in _tmp]  # specific indices
+        points_iterator = read_points(pcd, uvs=uvs)
+        points = [(point[0], 0, point[2], point[3]) for point in points_iterator]
+        pcd_new = create_cloud(pcd.header, pcd.fields, points)
         self.pcd_pub.publish(pcd_new)
 
 
