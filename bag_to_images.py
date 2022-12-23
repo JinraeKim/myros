@@ -21,33 +21,40 @@ def main():
     Extract a folder of images from a rosbag.
     """
     parser = argparse.ArgumentParser(description="Extract images from a ROS bag.")
-    parser.add_argument("bag_file", help="Input ROS bag.")
-    # parser.add_argument("image_topic", help="Image topic.")
+    parser.add_argument("--bag", help="Input ROS bag.")
+    parser.add_argument("--camera", help="Camera prefix")
 
     args = parser.parse_args()
 
-    bag_file = args.bag_file  # foo.bag
-    dir_log = args.bag_file[:-4]  # foo
+    bag = args.bag  # foo.bag
+    camera = args.camera  # foo.bag
+    dir_log = args.bag[:-4]  # foo
     
     # topics
     topics_dict = {
-        "color": "/camera/color/image_raw",
-        "aligned_depth_to_color": "/camera/aligned_depth_to_color/image_raw",
-        "depth": "/camera/depth/image_retc_raw",
+        "color": "{}/color/image_raw".format(camera),
+        "aligned_depth_to_color": "{}/aligned_depth_to_color/image_raw".format(camera),
+        # "points": "{}/depth/color/points".format(camera),  # This is not an image
     }
 
     # read ROS bag file
-    bag = rosbag.Bag(bag_file, "r")
+    bag = rosbag.Bag(bag, "r")
     bridge = CvBridge()
     for k, v in topics_dict.items():
-        print("Extract images from %s on %s (no counting if not exists)" % (args.bag_file, k))
+        print("Extract images from %s on %s (no counting if not exists)" % (args.bag, k))
         dir_log_specific = dir_log + "/%s" % k
         p = Path(dir_log_specific)
         p.mkdir(exist_ok=True, parents=True,)
         # os.makedirs(dir_log_specific, exist_ok=True)
         count = 0
         for topic, msg, t in bag.read_messages(topics=[v]):
-            cv_img = bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
+            if k == "color":
+                desired_encoding = "bgr8"
+            elif k == "aligned_depth_to_color":
+                desired_encoding = "16UC1"
+            else:
+                raise ValueError("Invalid encoding")
+            cv_img = bridge.imgmsg_to_cv2(msg, desired_encoding=desired_encoding)
 
             cv2.imwrite(os.path.join(dir_log_specific, "frame%06i.png" % count), cv_img)
             print("Wrote image %i" % count)
