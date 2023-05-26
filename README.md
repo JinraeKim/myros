@@ -30,10 +30,20 @@ Other options: `color_fps`, `depth_fps`, etc.
 roslaunch realsense2_camera rs_camera.launch align_depth:=true
 ```
 
+### Load and publish an image file
+```
+python3 load_and_publish_image.py --image my_image.png
+```
+
 
 ## Save images to ROS bag files and png files
 The following instruction is based on 
 [rosbag cli page](http://wiki.ros.org/rosbag/Commandline).
+
+### Rename topics inside a rosbag (before running the script, inspect and modify the code!!!)
+```
+python3 rosbag_rename.py --bag myrosbag.bag
+```
 
 ### Recipes for ROS image topics to ROS bag files
 ```
@@ -42,13 +52,18 @@ rosbag record --duration=10 -o record_t1.bag /camera/color/image_raw /camera/ali
 
 ### Recipes for ROS bag files to png files
 ```
-python bag_to_images.py record_t1
+python bag_to_images.py --bag <my_bag.bag> --camera <my_camera>
 ```
+For example,
+```
+python bag_to_images.py --bag a.bag --camera /camera
+```
+
 Note: if you use python3 with cv_bridge (and disabled cv_bridge for python2),
 you may need to run by the following code:
 
 ```
-python3 bag_to_images.py record_t1
+python3 bag_to_images.py --bag a.bag --camera /camera
 ```
 
 Also, if you encounter some errors, e.g., 
